@@ -4,15 +4,21 @@ import CreateUserService from './CreateUserService';
 import AppError from '@shared/errors/AppError'
 import CreateSessionService from './CreateSessionService';
 
+let fakeUserRepository: FakeUsersRepository;
+let fakeHashProvider: FakeHashProvider;
+let createUser: CreateUserService;
+let sessionUser: CreateSessionService;
 
 describe('AuthenticateUser', () => {
+  beforeEach(() => {
+    fakeUserRepository = new FakeUsersRepository();
+    fakeHashProvider = new FakeHashProvider();
+
+    createUser = new CreateUserService(fakeUserRepository, fakeHashProvider);
+    sessionUser = new CreateSessionService(fakeUserRepository, fakeHashProvider);
+  })
+
   it('should be able to authenticate a user', async () => {
-    const fakeUserRepository = new FakeUsersRepository();
-    const fakeHashProvider = new FakeHashProvider();
-
-    const createUser = new CreateUserService(fakeUserRepository, fakeHashProvider);
-    const sessionUser = new CreateSessionService(fakeUserRepository, fakeHashProvider);
-
     const user = await createUser.execute({
       name: 'Octacilio Serafim',
       email: 'netojso@gmail.com',
@@ -28,35 +34,24 @@ describe('AuthenticateUser', () => {
   });
 
   it('should not be able to authenticate a non existing user', async () => {
-    const fakeUserRepository = new FakeUsersRepository();
-    const fakeHashProvider = new FakeHashProvider();
-
-    const sessionUser = new CreateSessionService(fakeUserRepository, fakeHashProvider)
-
-    expect( sessionUser.execute({
+   await expect( sessionUser.execute({
       email: 'neto@gmail.com',
       password: '123456'
     })).rejects.toBeInstanceOf(AppError)
 
   });
 
-    it('should be able to authenticate a user with wrong password', async () => {
-      const fakeUserRepository = new FakeUsersRepository();
-      const fakeHashProvider = new FakeHashProvider();
+  it('should be able to authenticate a user with wrong password', async () => {
+    const user = await createUser.execute({
+      name: 'Octacilio Serafim',
+      email: 'netojso@gmail.com',
+      password: '123456'
+    })
 
-      const createUser = new CreateUserService(fakeUserRepository, fakeHashProvider);
-      const sessionUser = new CreateSessionService(fakeUserRepository, fakeHashProvider);
-
-      const user = await createUser.execute({
-        name: 'Octacilio Serafim',
-        email: 'netojso@gmail.com',
-        password: '123456'
-      })
-
-      expect(sessionUser.execute({
-        email: 'netojso@gmail.com',
-        password: '12345'
-      })).rejects.toBeInstanceOf(AppError)
-    });
+    await expect(sessionUser.execute({
+      email: 'netojso@gmail.com',
+      password: '12345'
+    })).rejects.toBeInstanceOf(AppError)
+  });
 
 });
