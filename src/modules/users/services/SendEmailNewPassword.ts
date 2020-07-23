@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe'
-
-import IUserRepository from '../repositories/IUserRepository'
-import IUserTokenRepository from '../repositories/IUserTokenRepository';
+import path from 'path'
+import IUsersRepository from '../repositories/IUsersRepository'
+import IUserTokensRepository from '../repositories/IUserTokensRepository';
 import AppError from '@shared/errors/AppError';
 import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
 
@@ -14,13 +14,13 @@ interface Request {
 class SendEmailNewPassword {
   constructor(
     @inject('UsersRepository')
-    private usersRepository: IUserRepository,
+    private usersRepository: IUsersRepository,
 
     @inject('MailProvider')
     private mailProvider: IMailProvider,
 
     @inject('UserTokenRepository')
-    private userTokenRepository: IUserTokenRepository
+    private userTokenRepository: IUserTokensRepository
     ) {}
 
   public async execute({email}: Request): Promise<void>{
@@ -32,6 +32,9 @@ class SendEmailNewPassword {
 
     const {token} = await this.userTokenRepository.generate(user.id)
 
+    const forgotPasswordTemplate = path.resolve(
+      __dirname, '..', 'views', 'forgot_password.hbs')
+
     await this.mailProvider.sendMail({
       to: {
         name: user.name,
@@ -39,10 +42,10 @@ class SendEmailNewPassword {
       },
       subject: '[Gobarber] Recuperação de senha',
       templateData: {
-        template: 'Olá, {{name}}: {{token}}',
+        file: forgotPasswordTemplate,
         variables: {
           name: user.name,
-          token,
+          link: `http://localhost:3000/reset_password?token=${token}`
         }
       }
     })

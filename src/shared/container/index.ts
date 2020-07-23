@@ -15,11 +15,11 @@ import './providers'
 import AppointmentsRepository from '@modules/appointments/infra/typeorm/repositories/AppointmentRepo';
 import IAppointmentRepository from '@modules/appointments/repositories/IAppointmentsRepository';
 
-import IUsersRepository from '@modules/users/repositories/IUserRepository';
-import UsersRepository from '@modules/users/infra/typeorm/repository/UserRepository';
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import UsersRepository from '@modules/users/infra/typeorm/repository/UsersRepository';
 
-import IUserTokensRepository from '@modules/users/repositories/IUserTokenRepository';
-import UserTokensRepository from '@modules/users/infra/typeorm/repository/UserTokenRepository'
+import IUserTokensRepository from '@modules/users/repositories/IUserTokensRepository';
+import UserTokensRepository from '@modules/users/infra/typeorm/repository/UserTokensRepository'
 
 container.registerSingleton<IAppointmentRepository>(
   'AppointmentsRepository', AppointmentsRepository)

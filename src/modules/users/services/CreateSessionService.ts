@@ -1,5 +1,5 @@
-import User from '../infra/typeorm/entities/Users'
-import IUserRepository from '../repositories/IUserRepository'
+import User from '../infra/typeorm/entities/User'
+import IUsersRepository from '../repositories/IUsersRepository'
 import IHashProvider from '@modules/users/providers/HashProvider/models/IHashProvider'
 import { inject, injectable } from 'tsyringe';
 import { sign } from 'jsonwebtoken';
@@ -21,7 +21,7 @@ class CreateSessionService {
 
   constructor(
     @inject('UsersRepository')
-    private usersRepository: IUserRepository,
+    private usersRepository: IUsersRepository,
 
     @inject('HashProvider')
     private hashProvider: IHashProvider
