@@ -13,7 +13,6 @@ const upload = multer(uploadConfig);
 const usersController = new UsersController();
 const usersAvatarController = new UserAvatarController();
 
-console.log('rota user')
 usersRouter.post('/', usersController.create)
 
 usersRouter.patch('/avatar',

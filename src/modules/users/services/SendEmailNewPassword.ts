@@ -19,13 +19,13 @@ class SendEmailNewPassword {
     @inject('MailProvider')
     private mailProvider: IMailProvider,
 
-    @inject('UserTokenRepository')
+    @inject('UserTokensRepository')
     private userTokenRepository: IUserTokensRepository
     ) {}
 
   public async execute({email}: Request): Promise<void>{
     const user = await this.usersRepository.findByEmail(email);
-
+    console.log('forgot')
     if(!user) {
       throw new AppError('User does not exist', 401)
     }

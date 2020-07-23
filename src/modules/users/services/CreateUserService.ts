@@ -22,7 +22,7 @@ class CreateUserService {
     ) {}
 
   public async execute({name , email, password} : Request) : Promise<User> {
-    console.log('service')
+
       const checkUserExists = await this.usersRepository.findByEmail(email)
 
       if (checkUserExists) {
@@ -31,7 +31,7 @@ class CreateUserService {
 
       const hashedPassword = await this.hashProvider.generateHash(password);
 
-      const user = this.usersRepository.create({
+      const user = await this.usersRepository.create({
         name,
         email,
         password: hashedPassword,
